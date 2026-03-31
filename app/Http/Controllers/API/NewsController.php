@@ -3,29 +3,34 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\NewsResource;
 use App\Models\News;
 
 class NewsController extends Controller
 {
-    // 🔹 GET ALL NEWS
+    // GET /api/news  (?category=K3+%2F+HSE)
     public function index()
     {
-        $news = News::latest()->get();
+        $query = News::published()->latest('published_at');
+
+        if (request()->filled('category')) {
+            $query->where('category', request('category'));
+        }
 
         return response()->json([
             'status' => 'success',
-            'data' => $news
+            'data'   => NewsResource::collection($query->get()),
         ]);
     }
 
-    // 🔹 GET DETAIL NEWS
+    // GET /api/news/{id}
     public function show($id)
     {
-        $news = News::findOrFail($id);
+        $news = News::published()->findOrFail($id);
 
         return response()->json([
             'status' => 'success',
-            'data' => $news
+            'data'   => new NewsResource($news),
         ]);
     }
 }

@@ -10,10 +10,15 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
-            $table->string('title');        // judul berita
-            $table->text('content');        // isi berita
-            $table->string('image')->nullable(); // gambar (opsional)
-            $table->timestamps();           // created_at & updated_at
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // penulis
+            $table->string('title');
+            $table->text('content');
+            $table->string('category');        // K3 / HSE, Operasional, Regulasi, Prestasi
+            $table->string('author');          // nama penulis (bisa beda dari user.name)
+            $table->string('image_url')->nullable();
+            $table->boolean('is_published')->default(false);
+            $table->timestamp('published_at')->nullable();
+            $table->timestamps();
         });
     }
 

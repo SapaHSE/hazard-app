@@ -3,49 +3,52 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User; // 🔥 tambahkan ini
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    // 🔹 GET PROFILE (data user login)
+    // GET /api/profile
     public function getProfile()
     {
         return response()->json([
             'status' => 'success',
-            'data' => Auth::user()
+            'data'   => new UserResource(Auth::user()),
         ]);
     }
 
-    // 🔹 UPDATE PROFILE
+    // POST /api/profile
     public function updateProfile(Request $request)
     {
-        /** @var User $user */ // 🔥 bantu IDE
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // 🔥 validasi (biar lebih aman)
         $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email'
+            'name'       => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'position'   => 'nullable|string|max:255',
+            'avatar'     => 'nullable|image|max:2048',
         ]);
 
-        // 🔥 update manual (aman)
-        if ($request->has('name')) {
-            $user->name = $request->name;
-            
+        if ($request->filled('name'))       $user->name       = $request->name;
+        if ($request->filled('department')) $user->department = $request->department;
+        if ($request->filled('position'))   $user->position   = $request->position;
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar_url) {
+                Storage::disk('public')->delete($user->avatar_url);
+            }
+            $user->avatar_url = $request->file('avatar')->store('avatars', 'public');
         }
 
-        if ($request->has('email')) {
-            $user->email = $request->email;
-        }
-
-        $user->save(); // ✅ ini sebenarnya valid di Laravel
+        $user->save();
 
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Profile berhasil diupdate',
-            'data' => $user
+            'data'    => new UserResource($user),
         ]);
     }
 }
