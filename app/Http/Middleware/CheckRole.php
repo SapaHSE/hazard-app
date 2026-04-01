@@ -8,11 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    /**
-     * Cara pakai di routes:
-     *   ->middleware('role:admin')
-     *   ->middleware('role:admin,supervisor')
-     */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
@@ -20,7 +15,7 @@ class CheckRole
         if (! $user || ! in_array($user->role, $roles)) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Akses ditolak. Anda tidak memiliki izin untuk mengakses endpoint ini.',
+                'message' => 'Akses ditolak. Anda tidak memiliki izin.',
             ], 403);
         }
 

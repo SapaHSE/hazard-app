@@ -29,6 +29,7 @@ class AuthController extends Controller
             'employee_id' => $validated['employee_id'] ?? null,
             'department'  => $validated['department'] ?? null,
             'position'    => $validated['position'] ?? null,
+            'role'        => 'user',
         ]);
 
         $token = $user->createToken('mobile-token')->plainTextToken;
