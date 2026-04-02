@@ -6,20 +6,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Report extends Model
+class Inspection extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = [
         'user_id',
         'title',
-        'description',
-        'type',
-        'severity',
-        'status',
+        'area',
         'location',
-        'name_pja',
-        'reported_department',
+        'inspector_name',
+        'result',
+        'notes',
         'image_url',
     ];
 
@@ -28,11 +26,8 @@ class Report extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function isReadBy(string $userId): bool
+    public function checklistItems()
     {
-        return ReadStatus::where('user_id', $userId)
-            ->where('item_id', $this->id)
-            ->where('item_type', 'report')
-            ->exists();
+        return $this->hasMany(ChecklistItem::class, 'inspection_id')->orderBy('sort_order');
     }
 }

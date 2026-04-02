@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ReportResource;
-use App\Models\Notification;
+use App\Models\ReadStatus;
 use App\Models\Report;
-use App\Models\ReportPhoto;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,20 +12,27 @@ use Illuminate\Support\Facades\Storage;
 class ReportController extends Controller
 {
     // GET /api/reports
+    // Filter  : ?type=hazard|inspection &severity=low|medium|high &status=open|in_progress|closed
+    // Search  : ?search=keyword
+    // Sort    : ?sort=oldest
+    // Paginate: ?page=1&per_page=10
     public function index(Request $request)
     {
-        $query = Report::with(['user', 'photos'])->latest();
+        $query  = Report::with('user')->latest();
+        $userId = Auth::id();
 
-        if ($request->filled('type'))     $query->where('type', $request->type);
-        if ($request->filled('severity')) $query->where('severity', $request->severity);
-        if ($request->filled('status'))   $query->where('status', $request->status);
+        if ($request->filled('type'))       $query->where('type', $request->type);
+        if ($request->filled('severity'))   $query->where('severity', $request->severity);
+        if ($request->filled('status'))     $query->where('status', $request->status);
+        if ($request->filled('department')) $query->where('reported_department', $request->department);
 
         if ($request->filled('search')) {
-            $keyword = $request->search;
-            $query->where(function ($q) use ($keyword) {
-                $q->where('title', 'like', "%{$keyword}%")
-                  ->orWhere('description', 'like', "%{$keyword}%")
-                  ->orWhere('location', 'like', "%{$keyword}%");
+            $kw = $request->search;
+            $query->where(function ($q) use ($kw) {
+                $q->where('title', 'like', "%{$kw}%")
+                  ->orWhere('description', 'like', "%{$kw}%")
+                  ->orWhere('location', 'like', "%{$kw}%")
+                  ->orWhere('name_pja', 'like', "%{$kw}%");
             });
         }
 
@@ -46,60 +50,66 @@ class ReportController extends Controller
                 'last_page'    => $reports->lastPage(),
                 'has_more'     => $reports->hasMorePages(),
             ],
-            'data' => ReportResource::collection($reports->items()),
+            'data' => collect($reports->items())->map(fn($r) => $this->formatReport($r, $userId)),
         ]);
     }
 
     // POST /api/reports
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'type'        => 'required|in:hazard,inspection',
-            'severity'    => 'required|in:low,medium,high',
-            'location'    => 'nullable|string|max:255',
-            'photos'      => 'nullable|array',
-            'photos.*'    => 'image|mimes:jpg,jpeg,png|max:2048',
+        $request->validate([
+            'title'               => 'required|string|max:200',
+            'description'         => 'required|string',
+            'type'                => 'required|in:hazard,inspection',
+            'severity'            => 'required|in:low,medium,high',
+            'location'            => 'required|string|max:200',
+            'name_pja'            => 'nullable|string|max:100',
+            'reported_department' => 'nullable|string|max:100',
+            'image'               => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $report = Report::create([
-            'user_id'     => Auth::id(),
-            'title'       => $validated['title'],
-            'description' => $validated['description'],
-            'type'        => $validated['type'],
-            'severity'    => $validated['severity'],
-            'location'    => $validated['location'] ?? null,
-            'status'      => 'open',
-        ]);
-
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                ReportPhoto::create([
-                    'report_id' => $report->id,
-                    'photo_url' => $photo->store('report-photos', 'public'),
-                ]);
-            }
+        $imageUrl = null;
+        if ($request->hasFile('image')) {
+            $imageUrl = asset('storage/' . $request->file('image')->store('reports', 'public'));
         }
 
-        $this->notifyAdmins($report);
-        $report->load(['user', 'photos']);
+        $report = Report::create([
+            'user_id'             => Auth::id(),
+            'title'               => $request->title,
+            'description'         => $request->description,
+            'type'                => $request->type,
+            'severity'            => $request->severity,
+            'status'              => 'open',
+            'location'            => $request->location,
+            'name_pja'            => $request->name_pja,
+            'reported_department' => $request->reported_department,
+            'image_url'           => $imageUrl,
+        ]);
+
+        $report->load('user');
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Laporan berhasil dibuat',
-            'data'    => new ReportResource($report),
+            'message' => 'Report submitted successfully',
+            'data'    => $this->formatReport($report, Auth::id()),
         ], 201);
     }
 
-    // GET /api/reports/{id}
+    // GET /api/reports/{id} — auto mark as read
     public function show($id)
     {
-        $report = Report::with(['user', 'photos'])->findOrFail($id);
+        $report = Report::with('user')->findOrFail($id);
+        $userId = Auth::id();
+
+        ReadStatus::firstOrCreate([
+            'user_id'   => $userId,
+            'item_id'   => $report->id,
+            'item_type' => 'report',
+        ], ['read_at' => now()]);
 
         return response()->json([
             'status' => 'success',
-            'data'   => new ReportResource($report),
+            'data'   => $this->formatReport($report, $userId),
         ]);
     }
 
@@ -113,69 +123,62 @@ class ReportController extends Controller
         $report = Report::findOrFail($id);
         $report->update(['status' => $request->status]);
 
-        Notification::create([
-            'user_id'         => $report->user_id,
-            'title'           => 'Status Laporan Diperbarui',
-            'body'            => "Laporan \"{$report->title}\" diperbarui menjadi " . ucfirst(str_replace('_', ' ', $request->status)) . ".",
-            'type'            => 'report',
-            'notifiable_id'   => $report->id,
-            'notifiable_type' => Report::class,
-        ]);
-
         return response()->json([
             'status'  => 'success',
-            'message' => 'Status laporan diperbarui',
-            'data'    => new ReportResource($report->load(['user', 'photos'])),
+            'message' => 'Report status updated successfully',
+            'data'    => $this->formatReport($report->load('user'), Auth::id()),
         ]);
     }
 
     // DELETE /api/reports/{id}
-    // Hanya bisa hapus laporan milik sendiri, kecuali admin bisa hapus semua
     public function destroy($id)
     {
-        $report = Report::with('photos')->findOrFail($id);
+        $report = Report::findOrFail($id);
         $user   = Auth::user();
 
-        // Cek izin — hanya pelapor atau admin yang bisa hapus
         if ($report->user_id !== $user->id && $user->role !== 'admin') {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Anda tidak memiliki izin menghapus laporan ini',
+                'message' => 'You do not have permission to delete this report',
             ], 403);
         }
 
-        // Hapus foto dari storage
-        foreach ($report->photos as $photo) {
-            Storage::disk('public')->delete($photo->photo_url);
+        if ($report->image_url) {
+            $path = str_replace(asset('storage/') . '/', '', $report->image_url);
+            Storage::disk('public')->delete($path);
         }
 
-        $report->delete(); // photos ikut terhapus karena cascade
+        $report->delete();
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Laporan berhasil dihapus',
+            'message' => 'Report deleted successfully',
         ]);
     }
 
-    private function notifyAdmins(Report $report): void
+    private function formatReport(Report $report, string $userId): array
     {
-        $admins        = User::whereIn('role', ['admin', 'supervisor'])->get();
-        $typeLabel     = $report->type === 'hazard' ? 'Hazard' : 'Inspeksi';
-        $severityLabel = match ($report->severity) {
-            'high'   => 'P1 - High',
-            'medium' => 'P2 - Medium',
-            default  => 'P3 - Low',
-        };
-
-        foreach ($admins as $admin) {
-            Notification::create([
-                'user_id'         => $admin->id,
-                'title'           => "Laporan {$typeLabel} Baru",
-                'body'            => "{$report->user->name} melaporkan \"{$report->title}\" [{$severityLabel}] di {$report->location}.",
-                'type'            => 'report',
-                'notifiable_id'   => $report->id,
-                'notifiable_type' => Report::class,
-            ]);
-        }
+        return [
+            'id'                  => $report->id,
+            'title'               => $report->title,
+            'description'         => $report->description,
+            'type'                => $report->type,
+            'severity'            => $report->severity,
+            'status'              => $report->status,
+            'location'            => $report->location,
+            'name_pja'            => $report->name_pja,
+            'reported_department' => $report->reported_department,
+            'image_url'           => $report->image_url,
+            'is_read'             => $report->isReadBy($userId),
+            'reported_by'         => $report->user ? [
+                'id'          => $report->user->id,
+                'full_name'   => $report->user->full_name,
+                'employee_id' => $report->user->employee_id,
+                'position'    => $report->user->position,
+                'department'  => $report->user->department,
+            ] : null,
+            'created_at'          => $report->created_at?->toDateTimeString(),
+            'updated_at'          => $report->updated_at?->toDateTimeString(),
+        ];
     }
 }

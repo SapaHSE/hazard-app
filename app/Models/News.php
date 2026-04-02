@@ -2,41 +2,39 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'user_id',
+        'created_by',
         'title',
+        'excerpt',
         'content',
         'category',
-        'author',
+        'author_name',
         'image_url',
-        'is_published',
-        'published_at',
+        'is_featured',
+        'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'is_published' => 'boolean',
-            'published_at' => 'datetime',
+            'is_featured' => 'boolean',
+            'is_active'   => 'boolean',
         ];
     }
 
-    // ── Scope: hanya tampilkan yang sudah published ──────────────────────────
-    public function scopePublished($query)
-    {
-        return $query->where('is_published', true);
-    }
+    public function scopeActive($q) { return $q->where('is_active', true); }
+    public function scopeFeatured($q) { return $q->where('is_featured', true); }
 
-    // ── Relasi ───────────────────────────────────────────────────────────────
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

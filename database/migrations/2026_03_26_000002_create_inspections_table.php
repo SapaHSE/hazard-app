@@ -8,18 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('reports', function (Blueprint $table) {
+        Schema::create('inspections', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(\Illuminate\Support\Facades\DB::raw('(UUID())'));
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('title', 200);
-            $table->text('description');
-            $table->enum('type', ['hazard', 'inspection'])->default('hazard');
-            $table->enum('severity', ['low', 'medium', 'high'])->default('low');
-            $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
-            $table->string('location', 200);
-            $table->string('name_pja', 100)->nullable();         // Penanggung Jawab Area
-            $table->string('reported_department', 100)->nullable(); // Department yang dilaporkan
+            $table->string('area', 100);                         // Work area (e.g. Mining Area Sector B)
+            $table->string('location', 200);                     // Specific location
+            $table->string('inspector_name', 100);               // Name of inspector
+            $table->enum('result', ['compliant', 'non_compliant', 'needs_follow_up'])->default('compliant');
+            $table->text('notes')->nullable();
             $table->text('image_url')->nullable();
             $table->timestamps();
         });
@@ -27,6 +25,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('reports');
+        Schema::dropIfExists('checklist_items');
+        Schema::dropIfExists('inspections');
     }
 };
