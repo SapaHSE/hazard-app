@@ -24,6 +24,7 @@ class AuthController extends Controller
             'phone_number'   => 'nullable|string|max:20',
             'position'       => 'nullable|string|max:100',
             'department'     => 'nullable|string|max:100',
+            'company'        => 'nullable|string|max:100',
         ], [
             'staff_id.unique'            => 'Staff ID sudah terdaftar. Gunakan Staff ID lain.',
             'personal_email.email'       => 'Format email tidak valid atau domain email tidak ditemukan. Pastikan email Anda benar.',
@@ -44,6 +45,7 @@ class AuthController extends Controller
             'phone_number'              => $request->phone_number,
             'position'                  => $request->position,
             'department'                => $request->department,
+            'company'                   => $request->company,
             'role'                      => 'user',
             'email_verification_token'  => $verificationToken,
         ]);
@@ -206,6 +208,7 @@ class AuthController extends Controller
             'phone_number'   => $user->phone_number,
             'position'       => $user->position,
             'department'     => $user->department,
+            'company'        => $user->company,
             'profile_photo'  => $user->profile_photo
                 ? asset('storage/' . $user->profile_photo)
                 : null,

@@ -293,6 +293,7 @@ class ReportController extends Controller
                 'full_name'  => $report->user->full_name,
                 'staff_id'   => $report->user->staff_id,
                 'department' => $report->user->department,
+                'company'    => $report->user->company,
             ] : null,
             'created_at'  => $report->created_at,
             'time_ago'    => $report->created_at?->diffForHumans(),

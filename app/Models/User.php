@@ -22,6 +22,7 @@ class User extends Authenticatable
         'phone_number',
         'position',
         'department',
+        'company',
         'password_hash',
         'profile_photo',
         'is_active',

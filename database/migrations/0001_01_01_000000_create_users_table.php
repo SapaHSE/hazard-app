@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('phone_number', 20)->nullable();
             $table->string('position', 100)->nullable();              // Job title / jabatan
             $table->string('department', 100)->nullable();            // Division / divisi
+            $table->string('company', 100)->nullable();               // Company / perusahaan
             $table->string('password_hash', 255);
             $table->text('profile_photo')->nullable();
             $table->boolean('is_active')->default(true);

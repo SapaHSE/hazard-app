@@ -37,6 +37,7 @@ class ProfileController extends Controller
             'phone_number'  => 'nullable|string|max:20',
             'position'      => 'nullable|string|max:100',
             'department'    => 'nullable|string|max:100',
+            'company'       => 'nullable|string|max:100',
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
@@ -45,6 +46,7 @@ class ProfileController extends Controller
         if ($request->filled('phone_number')) $user->phone_number = $request->phone_number;
         if ($request->filled('position'))     $user->position     = $request->position;
         if ($request->filled('department'))   $user->department   = $request->department;
+        if ($request->filled('company'))      $user->company      = $request->company;
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
@@ -108,6 +110,7 @@ class ProfileController extends Controller
             'phone_number'   => $user->phone_number,
             'position'       => $user->position,
             'department'     => $user->department,
+            'company'        => $user->company,
             'profile_photo'  => $user->profile_photo
                 ? asset('storage/' . $user->profile_photo)
                 : null,
