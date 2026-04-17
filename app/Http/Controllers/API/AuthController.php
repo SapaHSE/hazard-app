@@ -201,6 +201,36 @@ class AuthController extends Controller
         ]);
     }
 
+    // GET /api/users  (admin & superadmin only — untuk fitur Tag Orang)
+    public function listUsers(Request $request)
+    {
+        $search = $request->query('search');
+
+        $users = User::when($search, fn($q) => $q
+            ->where('full_name', 'like', "%{$search}%")
+            ->orWhere('employee_id', 'like', "%{$search}%")
+            ->orWhere('department', 'like', "%{$search}%")
+        )
+        ->where('is_active', true)
+        ->orderBy('full_name')
+        ->select(['id', 'full_name', 'employee_id', 'department', 'position', 'role', 'profile_photo'])
+        ->get()
+        ->map(fn($u) => [
+            'id'          => $u->id,
+            'full_name'   => $u->full_name,
+            'employee_id' => $u->employee_id,
+            'department'  => $u->department,
+            'position'    => $u->position,
+            'role'        => $u->role,
+            'photo_url'   => $u->profile_photo ? asset('storage/' . $u->profile_photo) : null,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $users,
+        ]);
+    }
+
     private function formatUser(User $user): array
     {
         return [
