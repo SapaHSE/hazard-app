@@ -5,6 +5,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\HazardReportController;
 use App\Http\Controllers\API\InspectionReportController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\NewsController;
 use App\Http\Controllers\API\AnnouncementController;
 use App\Http\Controllers\API\QrAssetController;
@@ -69,6 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/inspection-reports/{id}',      [InspectionReportController::class, 'destroy']);
     Route::post('/inspection-reports/{id}/status', [InspectionReportController::class, 'updateStatus'])
         ->middleware('role:admin,superadmin');
+
+    // ── Dashboard Statistics ──────────────────────────────────────────────────
+    Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
 
     // GET /api/users  — daftar user untuk fitur Tag Orang (admin & superadmin only)
     Route::get('/users', [AuthController::class, 'listUsers'])

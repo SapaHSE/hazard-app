@@ -393,7 +393,7 @@ class DatabaseSeeder extends Seeder
             'user_id'             => $demo->id,
             'title'               => 'Tumpahan Oli Hydraulic di Area Parkir Alat Berat',
             'description'         => 'Terdapat tumpahan oli hydraulic dari excavator PC200 Unit 03 di area parkir Sektor B. Genangan oli licin dapat menyebabkan karyawan terpeleset.',
-            'severity'            => 'medium',
+            'severity'            => 'high',
             'status'              => 'closed',
             'sub_status'          => 'resolved',
             'location'            => 'Parkir Alat Berat - Sektor B',
@@ -471,7 +471,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Ketersediaan APAR di kabin',   'is_checked' => true,  'sort_order' => 4],
             ['label' => 'Cek lampu dan sinyal',         'is_checked' => false, 'sort_order' => 5],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['report_id' => $r6->id]));
+            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r6->id]));
         }
 
         foreach ([
@@ -482,7 +482,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Tabung tidak berkarat/bocor',    'is_checked' => true,  'sort_order' => 4],
             ['label' => 'Lokasi APAR sesuai denah',       'is_checked' => true,  'sort_order' => 5],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['report_id' => $r7->id]));
+            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r7->id]));
         }
 
         foreach ([
@@ -492,7 +492,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Safety shoes dipakai',       'is_checked' => true,  'sort_order' => 3],
             ['label' => 'Safety gloves tersedia',     'is_checked' => true,  'sort_order' => 4],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['report_id' => $r8->id]));
+            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r8->id]));
         }
 
         // ══════════════════════════════════════════════════════════════════

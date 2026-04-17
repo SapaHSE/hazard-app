@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+// Model for Inspection Reports
 class InspectionReport extends Model
 {
     use HasFactory, HasUuids;

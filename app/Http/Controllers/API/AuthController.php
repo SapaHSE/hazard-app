@@ -206,11 +206,11 @@ class AuthController extends Controller
     {
         $search = $request->query('search');
 
-        $users = User::when($search, fn($q) => $q
-            ->where('full_name', 'like', "%{$search}%")
-            ->orWhere('employee_id', 'like', "%{$search}%")
-            ->orWhere('department', 'like', "%{$search}%")
-        )
+        $users = User::when($request->department, fn($q) => $q->where('department', $request->department))
+        ->when($search, fn($q) => $q->where(function($sub) use ($search) {
+            $sub->where('full_name', 'like', "%{$search}%")
+                ->orWhere('employee_id', 'like', "%{$search}%");
+        }))
         ->where('is_active', true)
         ->orderBy('full_name')
         ->select(['id', 'full_name', 'employee_id', 'department', 'position', 'role', 'profile_photo'])
