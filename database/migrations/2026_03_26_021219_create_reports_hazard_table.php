@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('hazard_category', 50)->nullable(); // e.g. TTA / KTA
             $table->string('hazard_subcategory', 150)->nullable();
             $table->text('suggestion')->nullable();
+            $table->boolean('is_public')->default(true);
 
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();

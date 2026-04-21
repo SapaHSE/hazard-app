@@ -354,6 +354,7 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Perlengkapan Keselamatan Rusak/Hilang',
             'suggestion'          => 'Segera bersihkan atau ganti rambu baru jika sudah buram agar mudah terlihat di malam hari.',
+            'is_public'           => true,
         ]);
 
         $r2 = HazardReport::create([
@@ -370,6 +371,7 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'TTA',
             'hazard_subcategory'  => 'Housekeeping Buruk',
             'suggestion'          => 'Pindahkan material ke area penyimpanan khusus. Jangan tinggalkan barang di jalur evakuasi.',
+            'is_public'           => false,
         ]);
 
         $r3 = HazardReport::create([
@@ -386,6 +388,7 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Instalasi Listrik Tidak Aman',
             'suggestion'          => 'Isolasi segera atau ganti kabel dan masukkan ke dalam pipa conduit.',
+            'is_public'           => true,
         ]);
 
         $r4 = HazardReport::create([
@@ -402,6 +405,7 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Pencemaran/Tumpahan B3',
             'suggestion'          => 'Gunakan oil absorber dan panggil petugas maintenance untuk membersihkan lantai parkiran.',
+            'is_public'           => true,
         ]);
 
         $r5 = HazardReport::create([
@@ -418,6 +422,7 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'TTA',
             'hazard_subcategory'  => 'Pelanggaran Prosedur K3/Lingkungan',
             'suggestion'          => 'Tegur pekerja yang bertanggung jawab dan edukasi ulang tentang SOP limbah B3.',
+            'is_public'           => false,
         ]);
 
         $r6 = InspectionReport::create([
