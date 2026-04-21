@@ -94,6 +94,48 @@ class NewsController extends Controller
         ], 201);
     }
 
+    // PUT /api/news/{id} (admin/supervisor only)
+    public function update(Request $request, $id)
+    {
+        $news = News::findOrFail($id);
+
+        $request->validate([
+            'title'       => 'required|string|max:300',
+            'excerpt'     => 'nullable|string',
+            'content'     => 'required|string',
+            'category'    => 'required|string|max:50',
+            'author_name' => 'nullable|string|max:100',
+            'is_featured' => 'boolean',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $imageUrl = $news->image_url;
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($news->image_url) {
+                $oldPath = str_replace(asset('storage/') . '/', '', $news->image_url);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $imageUrl = asset('storage/' . $request->file('image')->store('news', 'public'));
+        }
+
+        $news->update([
+            'title'       => $request->title,
+            'excerpt'     => $request->excerpt,
+            'content'     => $request->input('content'),
+            'category'    => $request->category,
+            'author_name' => $request->author_name,
+            'image_url'   => $imageUrl,
+            'is_featured' => $request->boolean('is_featured', $news->is_featured),
+        ]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'News article updated successfully',
+            'data'    => $this->formatNews($news->load('creator'), true),
+        ]);
+    }
+
     // DELETE /api/news/{id} (admin only)
     public function destroy($id)
     {

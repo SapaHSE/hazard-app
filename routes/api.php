@@ -36,14 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // ── Auth ─────────────────────────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // ── Admin User Management (CRUD) ──────────────────────────────────────────
-    Route::prefix('admin')->group(function () {
-        Route::get('/users',    [AuthController::class, 'adminIndex']);
-        Route::post('/users',   [AuthController::class, 'adminStore']);
-        Route::put('/users/{id}', [AuthController::class, 'adminUpdate']);
-        Route::delete('/users/{id}', [AuthController::class, 'adminDestroy']);
-    });
-
     // ── Profile ───────────────────────────────────────────────────────────────
     Route::get('/profile',                  [ProfileController::class, 'getProfile']);
     Route::post('/profile',                 [ProfileController::class, 'updateProfile']);
@@ -93,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/news',                  [NewsController::class, 'index']);
     Route::get('/news/{id}',             [NewsController::class, 'show']);
     Route::post('/news',                 [NewsController::class, 'store']);
+    Route::put('/news/{id}',             [NewsController::class, 'update']);
     Route::delete('/news/{id}',          [NewsController::class, 'destroy']);
 
     // ==========================================
@@ -118,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/news',        [NewsController::class, 'store'])
         ->middleware('role:admin,superadmin');
     Route::delete('/news/{id}', [NewsController::class, 'destroy'])
-        ->middleware('role:admin');
+        ->middleware('role:admin,superadmin');
 
     // ── QR Assets ─────────────────────────────────────────────────────────────
     // GET /api/qr-assets              → list all assets
@@ -143,4 +136,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/me', [AuthController::class, 'me']);
 
+    // ── Users (admin/superadmin only) ────────────────────────────────────────
+    Route::get('/admin/users', [AuthController::class, 'adminIndex'])->middleware('role:admin,superadmin');
+    Route::post('/admin/users', [AuthController::class, 'adminStore'])->middleware('role:admin,superadmin');
+    Route::put('/admin/users/{id}', [AuthController::class, 'adminUpdate'])->middleware('role:admin,superadmin');
+    Route::delete('/admin/users/{id}', [AuthController::class, 'adminDestroy'])->middleware('role:admin,superadmin');
+    
 });

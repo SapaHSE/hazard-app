@@ -354,8 +354,6 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Perlengkapan Keselamatan Rusak/Hilang',
             'suggestion'          => 'Segera bersihkan atau ganti rambu baru jika sudah buram agar mudah terlihat di malam hari.',
-            'company'             => 'PT. Bukit Baiduri Energi',
-            'is_public'           => true,
         ]);
 
         $r2 = HazardReport::create([
@@ -372,8 +370,6 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'TTA',
             'hazard_subcategory'  => 'Housekeeping Buruk',
             'suggestion'          => 'Pindahkan material ke area penyimpanan khusus. Jangan tinggalkan barang di jalur evakuasi.',
-            'company'             => 'PT. Khotai Makmur Insan Abadi',
-            'is_public'           => false,
         ]);
 
         $r3 = HazardReport::create([
@@ -390,8 +386,6 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Instalasi Listrik Tidak Aman',
             'suggestion'          => 'Isolasi segera atau ganti kabel dan masukkan ke dalam pipa conduit.',
-            'company'             => 'PT. Bukit Baiduri Energi',
-            'is_public'           => true,
         ]);
 
         $r4 = HazardReport::create([
@@ -408,8 +402,6 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Pencemaran/Tumpahan B3',
             'suggestion'          => 'Gunakan oil absorber dan panggil petugas maintenance untuk membersihkan lantai parkiran.',
-            'company'             => 'PT. Khotai Makmur Insan Abadi',
-            'is_public'           => true,
         ]);
 
         $r5 = HazardReport::create([
@@ -426,8 +418,6 @@ class DatabaseSeeder extends Seeder
             'hazard_category'     => 'TTA',
             'hazard_subcategory'  => 'Pelanggaran Prosedur K3/Lingkungan',
             'suggestion'          => 'Tegur pekerja yang bertanggung jawab dan edukasi ulang tentang SOP limbah B3.',
-            'company'             => 'PT. Bukit Baiduri Energi',
-            'is_public'           => false,
         ]);
 
         $r6 = InspectionReport::create([
@@ -481,7 +471,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Ketersediaan APAR di kabin',   'is_checked' => true,  'sort_order' => 4],
             ['label' => 'Cek lampu dan sinyal',         'is_checked' => false, 'sort_order' => 5],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r6->id]));
+            ChecklistItem::create(array_merge($item, ['report_id' => $r6->id]));
         }
 
         foreach ([
@@ -492,7 +482,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Tabung tidak berkarat/bocor',    'is_checked' => true,  'sort_order' => 4],
             ['label' => 'Lokasi APAR sesuai denah',       'is_checked' => true,  'sort_order' => 5],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r7->id]));
+            ChecklistItem::create(array_merge($item, ['report_id' => $r7->id]));
         }
 
         foreach ([
@@ -502,32 +492,32 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Safety shoes dipakai',       'is_checked' => true,  'sort_order' => 3],
             ['label' => 'Safety gloves tersedia',     'is_checked' => true,  'sort_order' => 4],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r8->id]));
+            ChecklistItem::create(array_merge($item, ['report_id' => $r8->id]));
         }
 
         // ══════════════════════════════════════════════════════════════════
         // REPORT LOGS
         // ══════════════════════════════════════════════════════════════════
 
-        ReportLog::create(['reportable_id' => $r1->id, 'reportable_type' => HazardReport::class, 'user_id' => $faiz->id,   'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(7)]);
-        ReportLog::create(['reportable_id' => $r1->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin->id,  'status' => 'in_progress', 'sub_status' => 'executing',  'message' => 'Laporan divalidasi dan tim cleaning dijadwalkan.',                             'created_at' => now()->subDays(6)]);
+        ReportLog::create(['reportable_id' => $r1->id, 'reportable_type' => HazardReport::class, 'user_id' => $faiz->id,   'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(5)]);
+        ReportLog::create(['reportable_id' => $r1->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin->id,  'status' => 'in_progress', 'sub_status' => 'executing',  'message' => 'Laporan divalidasi dan tim cleaning dijadwalkan.',                             'created_at' => now()->subDays(4)]);
 
-        ReportLog::create(['reportable_id' => $r2->id, 'reportable_type' => HazardReport::class, 'user_id' => $lintang->id,'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(5)]);
+        ReportLog::create(['reportable_id' => $r2->id, 'reportable_type' => HazardReport::class, 'user_id' => $lintang->id,'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(3)]);
         // Menambahkan tagged user (Rudi) di log r2
-        ReportLog::create(['reportable_id' => $r2->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin->id,'status' => 'open',        'sub_status' => 'validating', 'message' => 'Harap bantu pengecekan lapangan terkait isu ini.', 'tagged_user_id' => $rudi->id,   'created_at' => now()->subDays(4)]);
+        ReportLog::create(['reportable_id' => $r2->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin->id,'status' => 'open',        'sub_status' => 'validating', 'message' => 'Harap bantu pengecekan lapangan terkait isu ini.', 'tagged_user_id' => $rudi->id,   'created_at' => now()->subDays(2)]);
 
-        ReportLog::create(['reportable_id' => $r3->id, 'reportable_type' => HazardReport::class, 'user_id' => $rudi->id,   'status' => 'open',        'sub_status' => 'approved',   'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(3)]);
+        ReportLog::create(['reportable_id' => $r3->id, 'reportable_type' => HazardReport::class, 'user_id' => $rudi->id,   'status' => 'open',        'sub_status' => 'approved',   'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(2)]);
 
         ReportLog::create(['reportable_id' => $r4->id, 'reportable_type' => HazardReport::class, 'user_id' => $demo->id,   'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(10)]);
         ReportLog::create(['reportable_id' => $r4->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin->id,  'status' => 'in_progress', 'sub_status' => 'executing',  'message' => 'Tim maintenance ditugaskan untuk pembersihan area.',                            'created_at' => now()->subDays(8)]);
         ReportLog::create(['reportable_id' => $r4->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin->id,  'status' => 'closed',      'sub_status' => 'resolved',   'message' => 'Area telah dibersihkan dan oil absorber dipasang. Laporan ditutup.',            'created_at' => now()->subDays(7)]);
 
-        ReportLog::create(['reportable_id' => $r5->id, 'reportable_type' => HazardReport::class, 'user_id' => $putri->id,  'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(4)]);
-        ReportLog::create(['reportable_id' => $r5->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin2->id, 'status' => 'in_progress', 'sub_status' => 'preparing',  'message' => 'Limbah dipindahkan sementara, koordinasi dengan tim environmental dimulai.',    'created_at' => now()->subDays(2)]);
+        ReportLog::create(['reportable_id' => $r5->id, 'reportable_type' => HazardReport::class, 'user_id' => $putri->id,  'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan hazard baru dibuat.',                                                    'created_at' => now()->subDays(6)]);
+        ReportLog::create(['reportable_id' => $r5->id, 'reportable_type' => HazardReport::class, 'user_id' => $admin2->id, 'status' => 'in_progress', 'sub_status' => 'preparing',  'message' => 'Limbah dipindahkan sementara, koordinasi dengan tim environmental dimulai.',    'created_at' => now()->subDays(5)]);
 
         ReportLog::create(['reportable_id' => $r6->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin->id,  'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan inspeksi baru dibuat.',                                                  'created_at' => now()->subDays(14)]);
-        ReportLog::create(['reportable_id' => $r6->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin->id,  'status' => 'in_progress', 'sub_status' => 'executing',  'message' => 'Inspeksi sedang berjalan di lapangan.',                                         'created_at' => now()->subDays(10)]);
-        ReportLog::create(['reportable_id' => $r6->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin->id,  'status' => 'closed',      'sub_status' => 'resolved',   'message' => 'Inspeksi selesai. Excavator Unit 03 dijadwalkan service.',                      'created_at' => now()->subDays(9)]);
+        ReportLog::create(['reportable_id' => $r6->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin->id,  'status' => 'in_progress', 'sub_status' => 'executing',  'message' => 'Inspeksi sedang berjalan di lapangan.',                                         'created_at' => now()->subDays(14)]);
+        ReportLog::create(['reportable_id' => $r6->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin->id,  'status' => 'closed',      'sub_status' => 'resolved',   'message' => 'Inspeksi selesai. Excavator Unit 03 dijadwalkan service.',                      'created_at' => now()->subDays(13)]);
 
         ReportLog::create(['reportable_id' => $r7->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin2->id, 'status' => 'open',        'sub_status' => 'assigned',   'message' => 'Laporan inspeksi baru dibuat.',                                                  'created_at' => now()->subDay()]);
         ReportLog::create(['reportable_id' => $r8->id, 'reportable_type' => InspectionReport::class, 'user_id' => $admin->id,  'status' => 'open',        'sub_status' => 'validating', 'message' => 'Laporan inspeksi baru dibuat.',                                                  'created_at' => now()->subDays(2)]);
