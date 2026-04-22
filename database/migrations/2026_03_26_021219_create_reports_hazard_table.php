@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->text('image_url')->nullable();
             
             // Hazard-specific
-            $table->enum('severity', ['low', 'high', 'critical'])->nullable();
+            $table->enum('severity', ['low', 'medium', 'high'])->nullable();
             $table->string('name_pja', 100)->nullable();
             $table->string('company', 150)->nullable();
             $table->string('reported_department', 100)->nullable();

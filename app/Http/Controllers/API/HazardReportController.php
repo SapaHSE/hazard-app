@@ -75,7 +75,7 @@ class HazardReportController extends Controller
             'description'         => 'required|string',
             'location'            => 'required|string|max:200',
             'image'               => 'nullable|image|max:4096',
-            'severity'            => 'required|in:low,high,critical',
+            'severity'            => 'required|in:low,medium,high',
             'name_pja'            => 'nullable|string|max:100',
             'company'             => 'nullable|string|max:150',
             'reported_department' => 'nullable|string|max:100',
@@ -234,7 +234,6 @@ class HazardReportController extends Controller
         return [
             'id'                  => $report->id,
             'ticket_number'       => $report->ticket_number,
-            'type'                => 'hazard',
             'title'               => $report->title,
             'description'         => $report->description,
             'status'              => $report->status,
