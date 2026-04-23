@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
             'password_hash'  => Hash::make('password'),
             'is_active'      => true,
             'role'           => 'superadmin',
+            'tipe_afiliasi'  => 'owner',
             'email_verified_at' => now(),
         ]);
 
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
             'password_hash'  => Hash::make('password'),
             'is_active'      => true,
             'role'           => 'admin',
+            'tipe_afiliasi'  => 'owner',
             'email_verified_at' => now(),
         ]);
 
@@ -102,6 +104,8 @@ class DatabaseSeeder extends Seeder
             'password_hash'  => Hash::make('password'),
             'is_active'      => true,
             'role'           => 'user',
+            'tipe_afiliasi'  => 'kontraktor',
+            'perusahaan_kontraktor' => 'PT PAMA',
             'email_verified_at' => now(),
         ]);
 
@@ -341,23 +345,26 @@ class DatabaseSeeder extends Seeder
         // ══════════════════════════════════════════════════════════════════
 
         $r1 = HazardReport::create([
-            'ticket_number'       => '#TKT-0001',
+            'ticket_number'       => 'BBE-HZR-HSE-2026-000001',
             'user_id'             => $faiz->id,
             'title'               => 'Rambu Keselamatan Kotor & Tidak Terbaca',
             'description'         => 'Rambu keselamatan di area hauling road KM 3 sudah kotor dan warna pudar sehingga sulit dibaca oleh pengemudi dump truck, berpotensi menyebabkan kecelakaan lalu lintas tambang.',
-            'severity'            => 'critical',
+            'severity'            => 'high',
             'status'              => 'in_progress',
             'sub_status'          => 'executing',
             'location'            => 'Hauling Road KM 3',
-            'name_pja'            => 'Budi Santoso',
+            'pic_department'      => 'Budi Santoso, Sari Dewi Rahayu',
             'reported_department' => 'Operational',
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Perlengkapan Keselamatan Rusak/Hilang',
             'suggestion'          => 'Segera bersihkan atau ganti rambu baru jika sudah buram agar mudah terlihat di malam hari.',
+            'pelaku_pelanggaran'  => 'Unknown Driver',
+            'pelapor_location'    => '-0.4948, 117.1436',
+            'kejadian_location'   => '-0.4949, 117.1437',
         ]);
 
         $r2 = HazardReport::create([
-            'ticket_number'       => '#TKT-0002',
+            'ticket_number'       => 'BBE-HZR-HSE-2026-000002',
             'user_id'             => $lintang->id,
             'title'               => 'Material Workshop Berserakan di Jalur Evakuasi',
             'description'         => 'Material workshop berupa pipa besi dan suku cadang berserakan di depan pintu keluar workshop, menghalangi jalur evakuasi darurat yang seharusnya selalu bersih.',
@@ -365,23 +372,24 @@ class DatabaseSeeder extends Seeder
             'status'              => 'open',
             'sub_status'          => 'validating',
             'location'            => 'Depan Workshop Utama',
-            'name_pja'            => 'Hendra Wijaya',
+            'pic_department'      => 'Hendra Wijaya',
             'reported_department' => 'Operational',
             'hazard_category'     => 'TTA',
             'hazard_subcategory'  => 'Housekeeping Buruk',
             'suggestion'          => 'Pindahkan material ke area penyimpanan khusus. Jangan tinggalkan barang di jalur evakuasi.',
+            'pelaku_pelanggaran'  => 'Mechanical Team A',
         ]);
 
         $r3 = HazardReport::create([
-            'ticket_number'       => '#TKT-0003',
+            'ticket_number'       => 'BBE-HZR-HSE-2026-000003',
             'user_id'             => $rudi->id,
             'title'               => 'Kabel Listrik Terbuka di Ruang Server',
             'description'         => 'Kabel listrik bertegangan 220V di sudut ruang server lantai 3 terkelupas isolasinya, berpotensi menyebabkan sengatan listrik atau kebakaran pada perangkat server.',
-            'severity'            => 'high',
+            'severity'            => 'medium',
             'status'              => 'open',
             'sub_status'          => 'approved',
             'location'            => 'Ruang Server - Lantai 3',
-            'name_pja'            => 'Rudi Hartono',
+            'pic_department'      => 'Rudi Hartono, IT Department',
             'reported_department' => 'IT',
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Instalasi Listrik Tidak Aman',
@@ -389,7 +397,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $r4 = HazardReport::create([
-            'ticket_number'       => '#TKT-0004',
+            'ticket_number'       => 'BBE-HZR-HSE-2026-000004',
             'user_id'             => $demo->id,
             'title'               => 'Tumpahan Oli Hydraulic di Area Parkir Alat Berat',
             'description'         => 'Terdapat tumpahan oli hydraulic dari excavator PC200 Unit 03 di area parkir Sektor B. Genangan oli licin dapat menyebabkan karyawan terpeleset.',
@@ -397,31 +405,33 @@ class DatabaseSeeder extends Seeder
             'status'              => 'closed',
             'sub_status'          => 'resolved',
             'location'            => 'Parkir Alat Berat - Sektor B',
-            'name_pja'            => 'Budi Santoso',
+            'pic_department'      => 'Budi Santoso',
             'reported_department' => 'Operational',
             'hazard_category'     => 'KTA',
             'hazard_subcategory'  => 'Pencemaran/Tumpahan B3',
             'suggestion'          => 'Gunakan oil absorber dan panggil petugas maintenance untuk membersihkan lantai parkiran.',
+            'kejadian_location'   => '-0.4920, 117.1410',
         ]);
 
         $r5 = HazardReport::create([
-            'ticket_number'       => '#TKT-0005',
+            'ticket_number'       => 'BBE-HZR-HSE-2026-000005',
             'user_id'             => $putri->id,
             'title'               => 'Pembuangan Limbah B3 Tidak Sesuai SOP',
             'description'         => 'Ditemukan wadah limbah B3 berupa bekas cat dan thinner yang dibuang sembarangan di area belakang gudang, tidak sesuai prosedur pengelolaan limbah B3 KLHK.',
-            'severity'            => 'high',
+            'severity'            => 'medium',
             'status'              => 'in_progress',
             'sub_status'          => 'preparing',
             'location'            => 'Belakang Gudang Material',
-            'name_pja'            => 'Sari Dewi Rahayu',
+            'pic_department'      => 'Sari Dewi Rahayu, Environmental Dept',
             'reported_department' => 'Environmental',
             'hazard_category'     => 'TTA',
             'hazard_subcategory'  => 'Pelanggaran Prosedur K3/Lingkungan',
             'suggestion'          => 'Tegur pekerja yang bertanggung jawab dan edukasi ulang tentang SOP limbah B3.',
+            'pelaku_pelanggaran'  => 'Sub-con Painter Team',
         ]);
 
         $r6 = InspectionReport::create([
-            'ticket_number'  => '#TKT-0006',
+            'ticket_number'  => 'BBE-ISP-HSE-2026-000001',
             'user_id'        => $admin->id,
             'title'          => 'Inspeksi Rutin Alat Berat - Excavator Sektor B',
             'description'    => 'Inspeksi berkala bulanan excavator di area pertambangan Sektor B untuk memastikan kondisi operasional dan keselamatan.',
@@ -435,7 +445,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $r7 = InspectionReport::create([
-            'ticket_number'  => '#TKT-0007',
+            'ticket_number'  => 'BBE-ISP-HSE-2026-000002',
             'user_id'        => $admin2->id,
             'title'          => 'Inspeksi APAR Seluruh Gedung Kantor',
             'description'    => 'Pemeriksaan kondisi dan kelengkapan APAR di seluruh gedung kantor pusat BBE untuk memastikan kesiapan menghadapi darurat kebakaran.',
@@ -449,7 +459,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $r8 = InspectionReport::create([
-            'ticket_number'  => '#TKT-0008',
+            'ticket_number'  => 'BBE-ISP-HSE-2026-000003',
             'user_id'        => $admin->id,
             'title'          => 'Inspeksi Pemakaian APD Karyawan Area Tambang',
             'description'    => 'Inspeksi pemakaian Alat Pelindung Diri karyawan di area pertambangan aktif untuk memastikan kepatuhan terhadap standar K3.',
@@ -471,7 +481,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Ketersediaan APAR di kabin',   'is_checked' => true,  'sort_order' => 4],
             ['label' => 'Cek lampu dan sinyal',         'is_checked' => false, 'sort_order' => 5],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['report_id' => $r6->id]));
+            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r6->id]));
         }
 
         foreach ([
@@ -482,7 +492,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Tabung tidak berkarat/bocor',    'is_checked' => true,  'sort_order' => 4],
             ['label' => 'Lokasi APAR sesuai denah',       'is_checked' => true,  'sort_order' => 5],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['report_id' => $r7->id]));
+            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r7->id]));
         }
 
         foreach ([
@@ -492,7 +502,7 @@ class DatabaseSeeder extends Seeder
             ['label' => 'Safety shoes dipakai',       'is_checked' => true,  'sort_order' => 3],
             ['label' => 'Safety gloves tersedia',     'is_checked' => true,  'sort_order' => 4],
         ] as $item) {
-            ChecklistItem::create(array_merge($item, ['report_id' => $r8->id]));
+            ChecklistItem::create(array_merge($item, ['inspection_report_id' => $r8->id]));
         }
 
         // ══════════════════════════════════════════════════════════════════
