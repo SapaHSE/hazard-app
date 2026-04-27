@@ -21,6 +21,10 @@ use App\Http\Controllers\API\AreaController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
+// Master Data (Public for Registration & Dropdowns)
+Route::get('/companies', [CompanyController::class, 'index']);
+Route::get('/areas',     [AreaController::class, 'index']);
+
 // ── Email Verification ────────────────────────────────────────────────────────
 Route::get('/email/verify/{id}/{token}', [AuthController::class, 'verifyEmail']);  // dibuka via browser
 Route::post('/email/resend',             [AuthController::class, 'resendVerification']);
@@ -86,7 +90,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('role:superadmin');
 
     // ── Companies ─────────────────────────────────────────────────────────────
-    Route::get('/companies', [CompanyController::class, 'index']);
     Route::post('/companies', [CompanyController::class, 'store'])
         ->middleware('role:superadmin');
     Route::put('/companies/{id}', [CompanyController::class, 'update'])
@@ -97,7 +100,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('role:superadmin');
 
     // ── Areas ─────────────────────────────────────────────────────────────────
-    Route::get('/areas', [AreaController::class, 'index']);
     Route::post('/areas', [AreaController::class, 'store'])
         ->middleware('role:superadmin');
     Route::put('/areas/{id}', [AreaController::class, 'update'])

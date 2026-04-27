@@ -24,10 +24,10 @@ class AuthController extends Controller
             'phone_number'   => 'required|string|max:20',
             'position'       => 'required|string|max:100',
             'department'     => 'required|string|max:100',
-            'company'        => 'required|string|max:100',
+            'company'        => 'required|string|max:150',
             'tipe_afiliasi'  => 'nullable|string|max:50',
-            'perusahaan_kontraktor' => 'nullable|string|max:100',
-            'sub_kontraktor' => 'nullable|string|max:100',
+            'perusahaan_kontraktor' => 'nullable|string|max:150',
+            'sub_kontraktor' => 'nullable|string|max:150',
             'simper'         => 'nullable|string|max:50',
         ], [
             'employee_id.unique'         => 'NIK sudah terdaftar. Gunakan NIK lain.',
