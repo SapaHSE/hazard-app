@@ -30,6 +30,7 @@ class HazardReport extends Model
         'pic_department',
         'pelaku_pelanggaran',
         'company',
+        'area',
         'reported_department',
         'hazard_category',
         'hazard_subcategory',
@@ -42,6 +43,7 @@ class HazardReport extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 
     public function logs()
     {
