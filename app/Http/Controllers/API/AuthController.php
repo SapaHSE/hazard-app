@@ -228,7 +228,7 @@ class AuthController extends Controller
         }))
         ->where('is_active', true)
         ->orderBy('full_name')
-        ->select(['id', 'full_name', 'employee_id', 'department', 'position', 'role', 'profile_photo'])
+        ->select(['id', 'full_name', 'employee_id', 'department', 'position', 'company', 'role', 'profile_photo'])
         ->get()
         ->map(fn($u) => [
             'id'          => $u->id,
@@ -236,6 +236,7 @@ class AuthController extends Controller
             'employee_id' => $u->employee_id,
             'department'  => $u->department,
             'position'    => $u->position,
+            'company'     => $u->company,
             'role'        => $u->role,
             'photo_url'   => $u->profile_photo ? asset('storage/' . $u->profile_photo) : null,
         ]);

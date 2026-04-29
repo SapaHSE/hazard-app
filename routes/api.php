@@ -122,9 +122,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard/statistics', [DashboardController::class, 'statistics'])
         ->middleware('role:admin,superadmin');
 
-    // GET /api/users  — daftar user untuk fitur Tag Orang (admin & superadmin only)
-    Route::get('/users', [AuthController::class, 'listUsers'])
-        ->middleware('role:admin,superadmin');
+    // GET /api/users  — daftar user untuk fitur Tag Orang
+    Route::get('/users', [AuthController::class, 'listUsers']);
 
     // Inspections merged into /api/reports    // ==========================================
     // News & Articles
