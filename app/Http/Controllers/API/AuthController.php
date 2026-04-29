@@ -247,21 +247,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // GET /api/departments (untuk dropdown department dinamis)
-    public function listDepartments()
-    {
-        $departments = User::select('department')
-            ->whereNotNull('department')
-            ->where('department', '!=', '')
-            ->distinct()
-            ->orderBy('department')
-            ->pluck('department');
 
-        return response()->json([
-            'status' => 'success',
-            'data'   => $departments,
-        ]);
-    }
 
     // ── ADMIN USER MANAGEMENT (CRUD) ──────────────────────────────────────────
 

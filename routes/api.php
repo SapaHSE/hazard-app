@@ -15,6 +15,7 @@ use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\HazardCategoryController;
 use App\Http\Controllers\API\CompanyController;
 use App\Http\Controllers\API\AreaController;
+use App\Http\Controllers\API\DepartmentController;
 
 // ── Public Routes ─────────────────────────────────────────────────────────────
 
@@ -23,6 +24,7 @@ Route::post('/login',    [AuthController::class, 'login']);
 
 // Master Data (Public for Registration & Dropdowns)
 Route::get('/companies', [CompanyController::class, 'index']);
+Route::get('/departments', [DepartmentController::class, 'index']);
 Route::get('/areas',     [AreaController::class, 'index']);
 
 // ── Email Verification ────────────────────────────────────────────────────────
@@ -125,8 +127,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // GET /api/users  — daftar user untuk fitur Tag Orang
     Route::get('/users', [AuthController::class, 'listUsers']);
     
-    // GET /api/departments — daftar department dinamis dari user
-    Route::get('/departments', [AuthController::class, 'listDepartments']);
+    // ── Departments Management ────────────────────────────────────────────────
+    Route::post('/departments', [DepartmentController::class, 'store'])
+        ->middleware('role:superadmin');
+    Route::put('/departments/{id}', [DepartmentController::class, 'update'])
+        ->middleware('role:superadmin');
+    Route::delete('/departments/{id}', [DepartmentController::class, 'destroy'])
+        ->middleware('role:superadmin');
 
     // Inspections merged into /api/reports    // ==========================================
     // News & Articles
