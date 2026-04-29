@@ -104,6 +104,17 @@ class HazardReportController extends Controller
             $imageUrl = asset('storage/' . $path);
         }
 
+        // Auto-tag Departemen HSE
+        $picDepartment = $request->pic_department;
+        if (empty($picDepartment)) {
+            $picDepartment = 'Departemen HSE';
+        } else {
+            // Append if not already there
+            if (stripos($picDepartment, 'HSE') === false) {
+                $picDepartment .= ', Departemen HSE';
+            }
+        }
+
         $report = HazardReport::create([
             'user_id'             => Auth::id(),
             'title'               => $request->title,
@@ -115,7 +126,7 @@ class HazardReportController extends Controller
             'kejadian_location'   => $request->kejadian_location,
             'image_url'           => $imageUrl,
             'severity'            => $request->severity,
-            'pic_department'      => $request->pic_department,
+            'pic_department'      => $picDepartment,
             'pelaku_pelanggaran'  => $request->pelaku_pelanggaran,
             'company'             => $request->company,
             'area'                => $request->area,

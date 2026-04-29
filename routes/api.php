@@ -124,6 +124,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // GET /api/users  — daftar user untuk fitur Tag Orang
     Route::get('/users', [AuthController::class, 'listUsers']);
+    
+    // GET /api/departments — daftar department dinamis dari user
+    Route::get('/departments', [AuthController::class, 'listDepartments']);
 
     // Inspections merged into /api/reports    // ==========================================
     // News & Articles
