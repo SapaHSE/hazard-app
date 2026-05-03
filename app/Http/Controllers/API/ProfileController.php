@@ -232,9 +232,10 @@ class ProfileController extends Controller
         $request->merge($input);
 
         $request->validate([
-            'name'   => 'required|string|max:150',
-            'issuer' => 'required|string|max:150',
-            'year'   => 'nullable|integer',
+            'name'        => 'required|string|max:150',
+            'issuer'      => 'required|string|max:150',
+            'obtained_at' => 'nullable|date',
+            'expired_at'  => 'nullable|date',
             'status' => 'required|string|in:active,expired',
             'file'   => 'nullable|file|max:5120', // Max 5MB
         ]);
@@ -242,7 +243,7 @@ class ProfileController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $data = $request->only('name', 'issuer', 'year', 'status');
+        $data = $request->only('name', 'issuer', 'obtained_at', 'expired_at', 'status');
 
         if ($request->hasFile('file')) {
             $data['file_path'] = $request->file('file')->store('certifications', 'public');
@@ -273,9 +274,10 @@ class ProfileController extends Controller
         $request->merge($input);
 
         $request->validate([
-            'name'   => 'required|string|max:150',
-            'issuer' => 'required|string|max:150',
-            'year'   => 'nullable|integer',
+            'name'        => 'required|string|max:150',
+            'issuer'      => 'required|string|max:150',
+            'obtained_at' => 'nullable|date',
+            'expired_at'  => 'nullable|date',
             'status' => 'required|string|in:active,expired',
         ]);
 
@@ -284,7 +286,7 @@ class ProfileController extends Controller
         $cert = $user->certifications()->findOrFail($id);
 
         $cert->update($request->only(
-            'name', 'issuer', 'year', 'status'
+            'name', 'issuer', 'obtained_at', 'expired_at', 'status'
         ));
 
         return response()->json([
@@ -442,7 +444,8 @@ class ProfileController extends Controller
                 'id'          => $c->id,
                 'name'        => $c->name,
                 'issuer'      => $c->issuer,
-                'year'        => $c->year,
+                'obtained_at' => $c->obtained_at,
+                'expired_at'  => $c->expired_at,
                 'status'      => $c->status,
                 'is_verified' => (bool) $c->is_verified,
                 'file_url'    => $c->file_path ? asset('storage/' . $c->file_path) : null,
