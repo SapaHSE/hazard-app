@@ -25,6 +25,9 @@ class UserMedical extends Model
         'doctor_contact',
         'facility_name',
         'facility_contact',
+        'last_medication',
+        'current_medication',
+        'current_illness',
         'doctor_notes',
         'checklist_items',
     ];

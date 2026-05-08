@@ -13,13 +13,15 @@ class UserLicense extends Model
         'user_id',
         'name',
         'license_number',
+        'obtained_at',
         'expired_at',
         'status',
         'file_path',
     ];
 
     protected $casts = [
-        'expired_at' => 'date',
+        'obtained_at' => 'date',
+        'expired_at'  => 'date',
     ];
 
     protected static function boot()

@@ -232,7 +232,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $faiz->id,
             'name'    => 'Pelatihan Operator Alat Berat Tingkat Dasar',
             'issuer'  => 'Kemnaker RI',
-            'year'    => 2021,
+            'obtained_at' => '2021-01-15',
+            'expired_at'  => '2026-01-15',
             'status'  => 'active',
             'is_verified' => true,
         ]);
@@ -240,7 +241,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $faiz->id,
             'name'    => 'Basic Safety Training (BST)',
             'issuer'  => 'BNSP',
-            'year'    => 2022,
+            'obtained_at' => '2022-03-20',
+            'expired_at'  => '2027-03-20',
             'status'  => 'active',
             'is_verified' => true,
         ]);
@@ -248,7 +250,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $lintang->id,
             'name'    => 'Welding Inspector Level 1',
             'issuer'  => 'BNSP',
-            'year'    => 2023,
+            'obtained_at' => '2023-05-10',
+            'expired_at'  => '2028-05-10',
             'status'  => 'active',
             'is_verified' => false,
         ]);
@@ -256,7 +259,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $rudi->id,
             'name'    => 'Hazardous Area Installation (HAI)',
             'issuer'  => 'PLN Pusdiklat',
-            'year'    => 2021,
+            'obtained_at' => '2021-08-12',
+            'expired_at'  => '2026-08-12',
             'status'  => 'active',
             'is_verified' => true,
         ]);
@@ -264,7 +268,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $rudi->id,
             'name'    => 'Pelatihan Keselamatan Listrik',
             'issuer'  => 'Kemnaker RI',
-            'year'    => 2019,
+            'obtained_at' => '2019-11-05',
+            'expired_at'  => '2024-11-05',
             'status'  => 'expired',
             'is_verified' => true,
         ]);
@@ -272,7 +277,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $admin->id,
             'name'    => 'OHSE Management System (ISO 45001)',
             'issuer'  => 'SGS Indonesia',
-            'year'    => 2022,
+            'obtained_at' => '2022-02-14',
+            'expired_at'  => '2027-02-14',
             'status'  => 'active',
             'is_verified' => true,
         ]);
@@ -280,7 +286,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $admin2->id,
             'name'    => 'Incident Investigation & Root Cause Analysis',
             'issuer'  => 'IOSH',
-            'year'    => 2023,
+            'obtained_at' => '2023-09-30',
+            'expired_at'  => '2028-09-30',
             'status'  => 'active',
             'is_verified' => true,
         ]);
@@ -288,7 +295,8 @@ class DatabaseSeeder extends Seeder
             'user_id' => $putri->id,
             'name'    => 'Environmental Compliance Auditor',
             'issuer'  => 'KLHK',
-            'year'    => 2022,
+            'obtained_at' => '2022-06-25',
+            'expired_at'  => '2027-06-25',
             'status'  => 'active',
             'is_verified' => true,
         ]);

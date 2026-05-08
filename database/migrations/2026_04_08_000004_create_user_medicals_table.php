@@ -36,6 +36,11 @@ return new class extends Migration
             $table->string('facility_name', 200)->nullable();  // e.g. "Klinik Pratama BBE"
             $table->string('facility_contact', 50)->nullable();// e.g. "0541-123456"
 
+            // ── Obat & penyakit ──────────────────────────────────────
+            $table->string('last_medication')->nullable();      // Konsumsi Obat Terakhir
+            $table->string('current_medication')->nullable();   // Obat Berjalan
+            $table->text('current_illness')->nullable();        // Penyakit yang Sedang Diderita
+
             // ── Catatan & checklist ───────────────────────────────────
             $table->text('doctor_notes')->nullable();
             $table->json('checklist_items')->nullable();       // [{label, done}, ...]

@@ -13,7 +13,8 @@ return new class extends Migration
             $table->uuid('user_id');
             $table->string('name', 100);
             $table->string('license_number', 50);
-            $table->date('expired_at');
+            $table->date('obtained_at')->nullable();
+            $table->date('expired_at')->nullable();
             $table->enum('status', ['active', 'expired', 'suspended'])->default('active');
             $table->string('file_path')->nullable();
             $table->boolean('is_verified')->default(false);
