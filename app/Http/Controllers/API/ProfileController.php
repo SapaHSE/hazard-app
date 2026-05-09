@@ -14,14 +14,14 @@ class ProfileController extends Controller
     // GET /api/profile
     public function getProfile()
     {
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = User::with(['licenses', 'certifications', 'violations' => function ($q) {
             $q->orderBy('date_of_violation', 'desc');
         }, 'medicals' => function ($q) {
             $q->orderBy('checkup_date', 'desc');
         }])->findOrFail(Auth::id());
 
-        return response()->json([
+        return \response()->json([
             'status' => 'success',
             'data'   => $this->formatUser($user),
         ]);
@@ -40,6 +40,7 @@ class ProfileController extends Controller
             'position'      => 'nullable|string|max:100',
             'department'    => 'nullable|string|max:100',
             'company'       => 'nullable|string|max:100',
+            'alamat'        => 'nullable|string',
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
@@ -49,6 +50,7 @@ class ProfileController extends Controller
         if ($request->filled('position'))     $user->position     = $request->position;
         if ($request->filled('department'))   $user->department   = $request->department;
         if ($request->filled('company'))      $user->company      = $request->company;
+        if ($request->filled('alamat'))       $user->alamat       = $request->alamat;
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
@@ -59,7 +61,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Profile updated successfully',
             'data'    => $this->formatUser($user),
@@ -78,14 +80,14 @@ class ProfileController extends Controller
         ]);
 
         if (! Hash::check($request->current_password, $user->password_hash)) {
-            return response()->json([
+            return \response()->json([
                 'status'  => 'error',
                 'message' => 'Current password is incorrect',
             ], 422);
         }
 
         if (Hash::check($request->new_password, $user->password_hash)) {
-            return response()->json([
+            return \response()->json([
                 'status'  => 'error',
                 'message' => 'New password must be different from current password',
             ], 422);
@@ -95,7 +97,7 @@ class ProfileController extends Controller
         $user->save();
         $user->tokens()->delete();
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Password changed successfully. Please log in again.',
         ]);
@@ -113,7 +115,7 @@ class ProfileController extends Controller
         // Hapus data (Soft delete jika mau atau hard delete). Model saat ini tdk pakai softDelete
         $user->delete();
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Account deleted successfully.',
         ]);
@@ -157,7 +159,7 @@ class ProfileController extends Controller
 
         $license = $user->licenses()->create($data);
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'License added successfully.',
             'data'    => $license,
@@ -197,7 +199,7 @@ class ProfileController extends Controller
             'name', 'license_number', 'obtained_at', 'expired_at', 'status'
         ));
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'License updated successfully.',
             'data'    => $license,
@@ -212,7 +214,7 @@ class ProfileController extends Controller
         $license = $user->licenses()->findOrFail($id);
         $license->delete();
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'License deleted successfully.',
         ]);
@@ -253,7 +255,7 @@ class ProfileController extends Controller
 
         $cert = $user->certifications()->create($data);
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Certification added successfully.',
             'data'    => $cert,
@@ -291,7 +293,7 @@ class ProfileController extends Controller
             'name', 'issuer', 'obtained_at', 'expired_at', 'status'
         ));
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Certification updated successfully.',
             'data'    => $cert,
@@ -306,7 +308,7 @@ class ProfileController extends Controller
         $cert = $user->certifications()->findOrFail($id);
         $cert->delete();
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Certification deleted successfully.',
         ]);
@@ -351,7 +353,7 @@ class ProfileController extends Controller
             'doctor_notes', 'checklist_items'
         ));
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Medical record added successfully.',
             'data'    => $medical,
@@ -398,7 +400,7 @@ class ProfileController extends Controller
             'doctor_notes', 'checklist_items'
         ));
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Medical record updated successfully.',
             'data'    => $medical,
@@ -413,13 +415,13 @@ class ProfileController extends Controller
         $medical = $user->medicals()->findOrFail($id);
         $medical->delete();
 
-        return response()->json([
+        return \response()->json([
             'status'  => 'success',
             'message' => 'Medical record deleted successfully.',
         ]);
     }
 
-    private function formatUser($user): array
+    private function formatUser(\App\Models\User $user): array
     {
         return [
             'id'             => $user->id,
@@ -431,12 +433,13 @@ class ProfileController extends Controller
             'position'       => $user->position,
             'department'     => $user->department,
             'company'        => $user->company,
+            'alamat'         => $user->alamat,
             'tipe_afiliasi'  => $user->tipe_afiliasi,
             'perusahaan_kontraktor' => $user->perusahaan_kontraktor,
             'sub_kontraktor' => $user->sub_kontraktor,
             'simper'         => $user->simper,
             'profile_photo'  => $user->profile_photo
-                ? asset('storage/' . $user->profile_photo)
+                ? \asset('storage/' . $user->profile_photo)
                 : null,
             'role'           => $user->role,
             'is_active'      => $user->is_active,
@@ -449,7 +452,7 @@ class ProfileController extends Controller
                 'expired_at'     => $l->expired_at?->format('Y-m-d'),
                 'status'         => $l->status,
                 'is_verified'    => (bool) $l->is_verified,
-                'file_url'       => $l->file_path ? asset('storage/' . $l->file_path) : null,
+                'file_url'       => $l->file_path ? \asset('storage/' . $l->file_path) : null,
             ]) : [],
             'certifications' => $user->relationLoaded('certifications') ? $user->certifications->map(fn($c) => [
                 'id'          => $c->id,
@@ -459,7 +462,7 @@ class ProfileController extends Controller
                 'expired_at'  => $c->expired_at,
                 'status'      => $c->status,
                 'is_verified' => (bool) $c->is_verified,
-                'file_url'    => $c->file_path ? asset('storage/' . $c->file_path) : null,
+                'file_url'    => $c->file_path ? \asset('storage/' . $c->file_path) : null,
             ]) : [],
             'medicals'       => $user->relationLoaded('medicals') ? $user->medicals->map(fn($m) => [
                 'id'                => $m->id,

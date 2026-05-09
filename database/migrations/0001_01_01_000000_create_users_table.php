@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('position', 100)->nullable();              // Job title / jabatan
             $table->string('department', 100)->nullable();            // Division / divisi
             $table->string('company', 100)->nullable();               // Company / perusahaan
+            $table->text('alamat')->nullable();                       // Alamat
             $table->string('tipe_afiliasi', 50)->nullable();
             $table->string('perusahaan_kontraktor', 100)->nullable();
             $table->string('sub_kontraktor', 100)->nullable();

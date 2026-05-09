@@ -89,7 +89,7 @@ class HazardReportController extends Controller
             'company'             => 'nullable|string|max:150',
             'area'                => 'nullable|string|max:200',
             'reported_department' => 'nullable|string|max:100',
-            'hazard_category'     => 'nullable|in:TTA,KTA',
+            'hazard_category'     => 'nullable|string|max:50',
             'hazard_subcategory'  => 'nullable|string|max:150',
             'suggestion'          => 'nullable|string',
             'pelaku_pelanggaran'  => 'nullable|string|max:100',
