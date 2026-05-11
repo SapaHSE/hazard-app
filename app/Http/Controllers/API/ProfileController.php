@@ -44,13 +44,13 @@ class ProfileController extends Controller
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->filled('full_name'))    $user->full_name    = $request->full_name;
-        if ($request->filled('work_email'))   $user->work_email   = $request->work_email;
-        if ($request->filled('phone_number')) $user->phone_number = $request->phone_number;
-        if ($request->filled('position'))     $user->position     = $request->position;
-        if ($request->filled('department'))   $user->department   = $request->department;
-        if ($request->filled('company'))      $user->company      = $request->company;
-        if ($request->filled('alamat'))       $user->alamat       = $request->alamat;
+        if ($request->has('full_name'))    $user->full_name    = $request->full_name;
+        if ($request->has('work_email'))   $user->work_email   = $request->work_email;
+        if ($request->has('phone_number')) $user->phone_number = $request->phone_number;
+        if ($request->has('position'))     $user->position     = $request->position;
+        if ($request->has('department'))   $user->department   = $request->department;
+        if ($request->has('company'))      $user->company      = $request->company;
+        if ($request->has('alamat'))       $user->alamat       = $request->alamat;
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {

@@ -45,6 +45,7 @@ class DatabaseSeeder extends Seeder
             'position'       => 'System Administrator',
             'department'     => 'IT',
             'company'        => 'PT Bukit Baiduri Energi',
+            'alamat'         => 'Jl. Dr. Sutomo No. 1, Samarinda, Kalimantan Timur',
             'password_hash'  => Hash::make('password'),
             'is_active'      => true,
             'role'           => 'superadmin',
@@ -61,6 +62,7 @@ class DatabaseSeeder extends Seeder
             'position'       => 'HSE Manager',
             'department'     => 'K3 / HSE',
             'company'        => 'PT Bukit Baiduri Energi',
+            'alamat'         => 'Jl. Gajah Mada No. 15, Samarinda',
             'password_hash'  => Hash::make('password'),
             'is_active'      => true,
             'role'           => 'admin',
@@ -77,13 +79,14 @@ class DatabaseSeeder extends Seeder
             'position'       => 'Mine Safety Inspector',
             'department'     => 'K3 / HSE',
             'company'        => 'PT Bukit Baiduri Energi',
+            'alamat'         => 'Perum Citra Land Blok B1, Samarinda',
             'password_hash'  => Hash::make('password'),
             'is_active'      => true,
             'role'           => 'admin',
             'email_verified_at' => now(),
         ]);
 
-        // Demo user — staff_id = "1", password = "123"
+        // Demo user — staff_id = "1234567890", password = "123"
         $demo = User::create([
             'employee_id'       => '1',
             'full_name'      => 'Demo User',
@@ -93,6 +96,7 @@ class DatabaseSeeder extends Seeder
             'position'       => 'IT Intern',
             'department'     => 'IT',
             'company'        => 'PT Bukit Baiduri Energi',
+            'alamat'         => 'Mess Karyawan BBE, Loa Bakung',
             'password_hash'  => Hash::make('123'),
             'is_active'      => true,
             'role'           => 'user',
@@ -171,6 +175,7 @@ class DatabaseSeeder extends Seeder
             'user_id'        => $faiz->id,
             'name'           => 'SIM B2 Umum (Alat Berat)',
             'license_number' => 'SIM-B2-2021-001234',
+            'obtained_at'    => '2021-05-20',
             'expired_at'     => now()->addYears(2)->toDateString(),
             'status'         => 'active',
             'is_verified'    => true,
@@ -313,6 +318,9 @@ class DatabaseSeeder extends Seeder
             'weight'            => '70 kg',
             'blood_pressure'    => '118/76 mmHg',
             'allergies'         => 'Tidak ada',
+            'last_medication'   => 'Paracetamol (2 bulan lalu)',
+            'current_medication'=> 'Vitamin C',
+            'current_illness'   => 'Sehat / Tidak ada',
             'result'            => 'Fit to Work',
             'next_checkup_date' => now()->addMonths(6)->toDateString(),
         ]);

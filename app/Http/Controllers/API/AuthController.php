@@ -390,6 +390,41 @@ class AuthController extends Controller
         ]);
     }
 
+    // GET /api/admin/violations
+    public function adminViolationsIndex(Request $request)
+    {
+        // Auto update status if expired
+        UserViolation::where('status', 'Aktif')
+            ->whereNotNull('expired_at')
+            ->where('expired_at', '<', now()->toDateString())
+            ->update(['status' => 'Selesai']);
+
+        $search = $request->query('search');
+        $perPage = $request->query('per_page', 10);
+
+        $query = UserViolation::with('user:id,full_name,employee_id,profile_photo')
+            ->orderBy('date_of_violation', 'desc');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('full_name', 'like', "%{$search}%")
+                         ->orWhere('employee_id', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $violations = $query->paginate($perPage);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Violations retrieved successfully',
+            'data'    => $violations,
+        ]);
+    }
+
     // POST /api/admin/users/{id}/violations
     public function adminStoreViolation(Request $request, $id)
     {
@@ -398,14 +433,18 @@ class AuthController extends Controller
         $request->validate([
             'title'             => 'required|string|max:150',
             'location'          => 'nullable|string|max:150',
-            'date_of_violation' => 'required|date',
+            'date_of_violation' => 'nullable|date',
+            'expired_at'        => 'nullable|date',
             'status'            => 'nullable|string|max:50',
             'sanction'          => 'nullable|string|max:200',
         ]);
 
-        $violation = $user->violations()->create($request->only(
-            'title', 'location', 'date_of_violation', 'status', 'sanction'
-        ));
+        $data = $request->only('title', 'location', 'date_of_violation', 'expired_at', 'status', 'sanction');
+        if (empty($data['date_of_violation'])) {
+            $data['date_of_violation'] = now()->toDateString();
+        }
+ 
+        $violation = $user->violations()->create($data);
 
         return response()->json([
             'status'  => 'success',
@@ -422,13 +461,14 @@ class AuthController extends Controller
         $request->validate([
             'title'             => 'required|string|max:150',
             'location'          => 'nullable|string|max:150',
-            'date_of_violation' => 'required|date',
+            'date_of_violation' => 'nullable|date',
+            'expired_at'        => 'nullable|date',
             'status'            => 'nullable|string|max:50',
             'sanction'          => 'nullable|string|max:200',
         ]);
 
         $violation->update($request->only(
-            'title', 'location', 'date_of_violation', 'status', 'sanction'
+            'title', 'location', 'date_of_violation', 'expired_at', 'status', 'sanction'
         ));
 
         return response()->json([
