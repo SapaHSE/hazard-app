@@ -114,7 +114,7 @@ class DatabaseSeeder extends Seeder
             'role'           => 'user',
             'tipe_afiliasi'  => 'kontraktor',
             'perusahaan_kontraktor' => 'PT PAMA',
-            'simper'         => 'PAMA-OP-12345',
+
             'email_verified_at' => now(),
         ]);
 

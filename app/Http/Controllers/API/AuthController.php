@@ -22,7 +22,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'employee_id'    => 'required|string|min:10|max:16|unique:users,employee_id',
+            'employee_id'    => 'required|string|min:5|max:16|unique:users,employee_id',
             'full_name'      => 'required|string|max:100',
             'personal_email' => 'required|email:rfc,dns|max:150|unique:users',
             'work_email'     => 'nullable|email:rfc,dns|max:150|unique:users',
@@ -35,10 +35,10 @@ class AuthController extends Controller
             'tipe_afiliasi'  => 'nullable|string|max:50',
             'perusahaan_kontraktor' => 'nullable|string|max:150',
             'sub_kontraktor' => 'nullable|string|max:150',
-            'simper'         => 'nullable|string|max:50',
+
         ], [
             'employee_id.unique'         => 'NIK sudah terdaftar. Gunakan NIK lain.',
-            'employee_id.min'            => 'NIK minimal 10 digit.',
+            'employee_id.min'            => 'NIK minimal 5 digit.',
             'employee_id.max'            => 'NIK maksimal 16 digit.',
             'personal_email.email'       => 'Format email tidak valid. Pastikan email Anda benar.',
             'personal_email.unique'      => 'Email ini sudah terdaftar. Gunakan email lain atau login.',
@@ -63,7 +63,7 @@ class AuthController extends Controller
             'tipe_afiliasi'             => $request->tipe_afiliasi,
             'perusahaan_kontraktor'     => $request->perusahaan_kontraktor,
             'sub_kontraktor'            => $request->sub_kontraktor,
-            'simper'                    => $request->simper,
+
             'role'                      => 'user',
             'is_active'                 => false, // Require admin approval
             'email_verification_token'  => $verificationToken,
@@ -299,7 +299,7 @@ class AuthController extends Controller
             'tipe_afiliasi'  => 'nullable|string|max:50',
             'perusahaan_kontraktor' => 'nullable|string|max:100',
             'sub_kontraktor' => 'nullable|string|max:100',
-            'simper'         => 'nullable|string|max:50',
+
             'role'           => 'required|string|in:user,admin,superadmin',
             'password'       => 'required|string|min:6',
             'is_active'      => 'boolean',
@@ -318,7 +318,7 @@ class AuthController extends Controller
             'tipe_afiliasi'  => $request->tipe_afiliasi,
             'perusahaan_kontraktor' => $request->perusahaan_kontraktor,
             'sub_kontraktor' => $request->sub_kontraktor,
-            'simper'         => $request->simper,
+
             'role'           => $request->role,
             'password_hash'  => Hash::make($request->password),
             'is_active'      => $request->is_active ?? true,
@@ -350,7 +350,7 @@ class AuthController extends Controller
             'tipe_afiliasi'  => 'nullable|string|max:50',
             'perusahaan_kontraktor' => 'nullable|string|max:100',
             'sub_kontraktor' => 'nullable|string|max:100',
-            'simper'         => 'nullable|string|max:50',
+
             'role'           => 'required|string|in:user,admin,superadmin',
             'password'       => 'nullable|string|min:6',
             'is_active'      => 'boolean',
@@ -578,7 +578,7 @@ class AuthController extends Controller
             'tipe_afiliasi'  => $user->tipe_afiliasi,
             'perusahaan_kontraktor' => $user->perusahaan_kontraktor,
             'sub_kontraktor' => $user->sub_kontraktor,
-            'simper'         => $user->simper,
+
             'profile_photo'  => $user->profile_photo
                 ? asset('storage/' . $user->profile_photo)
                 : null,

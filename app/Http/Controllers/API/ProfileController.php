@@ -437,7 +437,7 @@ class ProfileController extends Controller
             'tipe_afiliasi'  => $user->tipe_afiliasi,
             'perusahaan_kontraktor' => $user->perusahaan_kontraktor,
             'sub_kontraktor' => $user->sub_kontraktor,
-            'simper'         => $user->simper,
+
             'profile_photo'  => $user->profile_photo
                 ? \asset('storage/' . $user->profile_photo)
                 : null,
