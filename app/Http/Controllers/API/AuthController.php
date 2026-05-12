@@ -400,10 +400,15 @@ class AuthController extends Controller
             ->update(['status' => 'Selesai']);
 
         $search = $request->query('search');
+        $status = $request->query('status');
         $perPage = $request->query('per_page', 10);
 
         $query = UserViolation::with('user:id,full_name,employee_id,profile_photo')
             ->orderBy('date_of_violation', 'desc');
+
+        if ($status && $status !== 'Semua') {
+            $query->where('status', $status);
+        }
 
         if ($search) {
             $query->where(function($q) use ($search) {
@@ -503,6 +508,18 @@ class AuthController extends Controller
         ]);
     }
 
+    // DELETE /api/admin/licenses/{id}/reject
+    public function adminRejectLicense($id)
+    {
+        $license = UserLicense::findOrFail($id);
+        $license->delete();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Lisensi berhasil ditolak dan dihapus.',
+        ]);
+    }
+
     // PUT /api/admin/certifications/{id}/verify
     public function adminVerifyCertification(Request $request, $id)
     {
@@ -513,6 +530,18 @@ class AuthController extends Controller
             'status'  => 'success',
             'message' => 'Certification verification updated successfully.',
             'data'    => $cert,
+        ]);
+    }
+
+    // DELETE /api/admin/certifications/{id}/reject
+    public function adminRejectCertification($id)
+    {
+        $cert = UserCertification::findOrFail($id);
+        $cert->delete();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Sertifikasi berhasil ditolak dan dihapus.',
         ]);
     }
 
@@ -598,6 +627,53 @@ class AuthController extends Controller
             'status'  => 'success',
             'message' => 'Registration logs retrieved successfully',
             'data'    => $logs,
+        ]);
+    }
+
+    // GET /api/admin/approvals/documents
+    public function adminPendingDocuments(Request $request)
+    {
+        $licenses = UserLicense::with('user:id,full_name,employee_id,company,department,profile_photo')
+            ->where('is_verified', false)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(fn($l) => [
+                'type'           => 'license',
+                'id'             => $l->id,
+                'name'           => $l->name,
+                'license_number' => $l->license_number,
+                'issuer'         => $l->issuer,
+                'obtained_at'    => $l->obtained_at?->format('Y-m-d'),
+                'expired_at'     => $l->expired_at?->format('Y-m-d'),
+                'file_url'       => $l->file_path ? \asset('storage/' . $l->file_path) : null,
+                'created_at'     => $l->created_at?->format('Y-m-d H:i:s'),
+                'user'           => $l->user,
+            ]);
+
+        $certifications = UserCertification::with('user:id,full_name,employee_id,company,department,profile_photo')
+            ->where('is_verified', false)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(fn($c) => [
+                'type'                 => 'certification',
+                'id'                   => $c->id,
+                'name'                 => $c->name,
+                'certification_number' => $c->certification_number,
+                'issuer'               => $c->issuer,
+                'obtained_at'          => $c->obtained_at,
+                'expired_at'           => $c->expired_at,
+                'file_url'             => $c->file_path ? \asset('storage/' . $c->file_path) : null,
+                'created_at'           => $c->created_at?->format('Y-m-d H:i:s'),
+                'user'                 => $c->user,
+            ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => [
+                'licenses'       => $licenses,
+                'certifications' => $certifications,
+                'total_pending'  => count($licenses) + count($certifications),
+            ],
         ]);
     }
 

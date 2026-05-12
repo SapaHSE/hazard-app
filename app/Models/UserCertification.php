@@ -12,11 +12,17 @@ class UserCertification extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'certification_number',
         'issuer',
         'obtained_at',
         'expired_at',
         'status',
         'file_path',
+        'is_verified',
+    ];
+
+    protected $casts = [
+        'is_verified' => 'boolean',
     ];
 
     public function user()

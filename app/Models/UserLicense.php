@@ -13,15 +13,18 @@ class UserLicense extends Model
         'user_id',
         'name',
         'license_number',
+        'issuer',
         'obtained_at',
         'expired_at',
         'status',
         'file_path',
+        'is_verified',
     ];
 
     protected $casts = [
         'obtained_at' => 'date',
         'expired_at'  => 'date',
+        'is_verified' => 'boolean',
     ];
 
     protected static function boot()

@@ -142,6 +142,7 @@ class ProfileController extends Controller
         $request->validate([
             'name'           => 'required|string|max:150', 
             'license_number' => 'required|string|max:100',
+            'issuer'         => 'nullable|string|max:150',
             'obtained_at'    => 'nullable|date',
             'expired_at'     => 'nullable|date', 
             'status'         => 'required|string|in:active,expired,suspended',
@@ -151,7 +152,7 @@ class ProfileController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $data = $request->only('name', 'license_number', 'obtained_at', 'expired_at', 'status');
+        $data = $request->only('name', 'license_number', 'issuer', 'obtained_at', 'expired_at', 'status');
         
         if ($request->hasFile('file')) {
             $data['file_path'] = $request->file('file')->store('licenses', 'public');
@@ -184,11 +185,12 @@ class ProfileController extends Controller
         $request->merge($input);
 
         $request->validate([
-            'name'           => 'required|string|max:150',
-            'license_number' => 'required|string|max:100',
+            'name'           => 'nullable|string|max:150',
+            'license_number' => 'nullable|string|max:100',
+            'issuer'         => 'nullable|string|max:150',
             'obtained_at'    => 'nullable|date',
             'expired_at'     => 'nullable|date',
-            'status'         => 'required|string|in:active,expired,suspended',
+            'status'         => 'nullable|string|in:active,expired,suspended',
         ]);
 
         /** @var \App\Models\User $user */
@@ -196,7 +198,7 @@ class ProfileController extends Controller
         $license = $user->licenses()->findOrFail($id);
 
         $license->update($request->only(
-            'name', 'license_number', 'obtained_at', 'expired_at', 'status'
+            'name', 'license_number', 'issuer', 'obtained_at', 'expired_at', 'status'
         ));
 
         return \response()->json([
@@ -236,12 +238,13 @@ class ProfileController extends Controller
         $request->merge($input);
 
         $request->validate([
-            'name'        => 'required|string|max:150',
-            'issuer'      => 'required|string|max:150',
-            'obtained_at' => 'nullable|date',
-            'expired_at'  => 'nullable|date',
-            'status' => 'required|string|in:active,expired',
-            'file'   => 'nullable|file|max:5120', // Max 5MB
+            'name'                 => 'required|string|max:150',
+            'certification_number' => 'nullable|string|max:100',
+            'issuer'               => 'required|string|max:150',
+            'obtained_at'          => 'nullable|date',
+            'expired_at'           => 'nullable|date',
+            'status'               => 'required|string|in:active,expired',
+            'file'                 => 'nullable|file|max:5120', // Max 5MB
         ]);
 
         /** @var \App\Models\User $user */
@@ -290,7 +293,7 @@ class ProfileController extends Controller
         $cert = $user->certifications()->findOrFail($id);
 
         $cert->update($request->only(
-            'name', 'issuer', 'obtained_at', 'expired_at', 'status'
+            'name', 'certification_number', 'issuer', 'obtained_at', 'expired_at', 'status'
         ));
 
         return \response()->json([
@@ -433,6 +436,7 @@ class ProfileController extends Controller
             'position'       => $user->position,
             'department'     => $user->department,
             'company'        => $user->company,
+            'company_code'   => \App\Models\Company::where('name', $user->company)->first()?->code,
             'alamat'         => $user->alamat,
             'tipe_afiliasi'  => $user->tipe_afiliasi,
             'perusahaan_kontraktor' => $user->perusahaan_kontraktor,
@@ -455,14 +459,15 @@ class ProfileController extends Controller
                 'file_url'       => $l->file_path ? \asset('storage/' . $l->file_path) : null,
             ]) : [],
             'certifications' => $user->relationLoaded('certifications') ? $user->certifications->map(fn($c) => [
-                'id'          => $c->id,
-                'name'        => $c->name,
-                'issuer'      => $c->issuer,
-                'obtained_at' => $c->obtained_at,
-                'expired_at'  => $c->expired_at,
-                'status'      => $c->status,
-                'is_verified' => (bool) $c->is_verified,
-                'file_url'    => $c->file_path ? \asset('storage/' . $c->file_path) : null,
+                'id'                   => $c->id,
+                'name'                 => $c->name,
+                'certification_number' => $c->certification_number,
+                'issuer'               => $c->issuer,
+                'obtained_at'          => $c->obtained_at,
+                'expired_at'           => $c->expired_at,
+                'status'               => $c->status,
+                'is_verified'          => (bool) $c->is_verified,
+                'file_url'             => $c->file_path ? \asset('storage/' . $c->file_path) : null,
             ]) : [],
             'medicals'       => $user->relationLoaded('medicals') ? $user->medicals->map(fn($m) => [
                 'id'                => $m->id,
@@ -491,6 +496,7 @@ class ProfileController extends Controller
                 'title'             => $v->title,
                 'location'          => $v->location,
                 'date_of_violation' => $v->date_of_violation?->format('Y-m-d'),
+                'expired_at'        => $v->expired_at?->format('Y-m-d'),
                 'status'            => $v->status,
                 'sanction'          => $v->sanction,
             ]) : [],
