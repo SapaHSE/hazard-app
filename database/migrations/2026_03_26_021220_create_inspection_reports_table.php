@@ -13,15 +13,15 @@ return new class extends Migration {
             $table->uuid('user_id');
             $table->string('title', 200);
             $table->text('description');
-            $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
+            $table->enum('status', ['pending', 'open', 'in_progress', 'closed', 'rejected'])->default('pending');
             $table->string('sub_status', 50)->nullable();
             $table->string('location', 200);
             $table->text('image_url')->nullable();
-            $table->string('company', 150)->nullable();
+            $table->string('company', 255)->nullable();
             
             // Inspection-specific
-            $table->string('area', 100)->nullable();
-            $table->string('name_inspector', 150)->nullable();
+            $table->string('area', 255)->nullable();
+            $table->string('name_inspector', 255)->nullable();
             $table->text('notes')->nullable();
             $table->enum('result', ['compliant', 'non_compliant', 'needs_follow_up'])->nullable();
 

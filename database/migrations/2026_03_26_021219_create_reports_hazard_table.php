@@ -13,24 +13,22 @@ return new class extends Migration {
             $table->uuid('user_id');
             $table->string('title', 200);
             $table->text('description');
-            $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
+            $table->enum('status', ['pending', 'open', 'in_progress', 'closed', 'rejected'])->default('pending');
             $table->string('sub_status', 50)->nullable();
             $table->string('location', 200);
             $table->text('image_url')->nullable();
             
             // Hazard-specific
             $table->enum('severity', ['low', 'medium', 'high'])->nullable();
-            $table->string('name_pja', 100)->nullable();
-            $table->string('company', 150)->nullable();
-            $table->string('area', 200)->nullable();
-            $table->string('reported_department', 100)->nullable();
-            $table->string('pic_department', 100)->nullable();
-            $table->string('pelaku_pelanggaran', 150)->nullable();
-            $table->string('pelapor_location', 100)->nullable();
-            $table->string('kejadian_location', 100)->nullable();
+            $table->string('company', 255)->nullable();
+            $table->string('reported_department', 255)->nullable();
+            $table->string('pic_department', 255)->nullable();
+            $table->string('pelaku_pelanggaran', 255)->nullable();
+            $table->string('pelapor_location', 255)->nullable();
+            $table->string('kejadian_location', 255)->nullable();
             $table->date('due_date')->nullable();
-            $table->string('hazard_category', 50)->nullable(); // e.g. TTA / KTA
-            $table->string('hazard_subcategory', 150)->nullable();
+            $table->string('hazard_category', 255)->nullable(); // e.g. TTA / KTA
+            $table->string('hazard_subcategory', 255)->nullable();
             $table->text('suggestion')->nullable();
             $table->boolean('is_public')->default(true);
 
