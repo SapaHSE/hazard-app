@@ -55,14 +55,23 @@ class AnnouncementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:200',
-            'body'  => 'required|string',
+            'title'     => 'required|string|max:200',
+            'body'      => 'required|string',
+            'is_urgent' => 'boolean',
+            'image'     => 'nullable|image|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('announcements', 'public');
+        }
 
         $announcement = Announcement::create([
             'created_by' => Auth::id(),
             'title'      => $request->title,
             'body'       => $request->body,
+            'image'      => $imagePath,
+            'is_urgent'  => $request->is_urgent ?? false,
             'is_active'  => true,
         ]);
 
@@ -120,6 +129,8 @@ class AnnouncementController extends Controller
         $data = [
             'id'         => $a->id,
             'title'      => $a->title,
+            'is_urgent'  => (bool) $a->is_urgent,
+            'image_url'  => $a->image ? \asset('storage/' . $a->image) : null,
             'is_read'    => $a->isReadBy($userId),
             'created_by' => $a->creator ? [
                 'id'        => $a->creator->id,
