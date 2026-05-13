@@ -14,6 +14,7 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
+        session_write_close();
         try {
             $query = Company::query()->orderBy('name');
 

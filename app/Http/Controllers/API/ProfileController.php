@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserMedical;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,7 @@ class ProfileController extends Controller
     // GET /api/profile
     public function getProfile()
     {
+        session_write_close();
         /** @var \App\Models\User $user */
         $user = User::with(['licenses', 'certifications', 'violations' => function ($q) {
             $q->orderBy('date_of_violation', 'desc');
@@ -30,27 +32,36 @@ class ProfileController extends Controller
     // POST /api/profile
     public function updateProfile(Request $request)
     {
+        session_write_close();
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $request->validate([
-            'full_name'     => 'nullable|string|max:100',
-            'work_email'    => 'nullable|email|max:150|unique:users,work_email,' . $user->id,
-            'phone_number'  => 'nullable|string|max:20',
-            'position'      => 'nullable|string|max:100',
-            'department'    => 'nullable|string|max:100',
-            'company'       => 'nullable|string|max:100',
-            'alamat'        => 'nullable|string',
-            'profile_photo' => 'nullable|image|max:2048',
+            'full_name'             => 'nullable|string|max:100',
+            'personal_email'        => 'nullable|email|max:150|unique:users,personal_email,' . $user->id,
+            'work_email'            => 'nullable|email|max:150|unique:users,work_email,' . $user->id,
+            'phone_number'          => 'nullable|string|max:20',
+            'position'              => 'nullable|string|max:100',
+            'department'            => 'nullable|string|max:100',
+            'company'               => 'nullable|string|max:100',
+            'tipe_afiliasi'         => 'nullable|string|max:50',
+            'perusahaan_kontraktor' => 'nullable|string|max:150',
+            'sub_kontraktor'        => 'nullable|string|max:150',
+            'alamat'                => 'nullable|string',
+            'profile_photo'         => 'nullable|image|max:2048',
         ]);
 
-        if ($request->has('full_name'))    $user->full_name    = $request->full_name;
-        if ($request->has('work_email'))   $user->work_email   = $request->work_email;
-        if ($request->has('phone_number')) $user->phone_number = $request->phone_number;
-        if ($request->has('position'))     $user->position     = $request->position;
-        if ($request->has('department'))   $user->department   = $request->department;
-        if ($request->has('company'))      $user->company      = $request->company;
-        if ($request->has('alamat'))       $user->alamat       = $request->alamat;
+        if ($request->has('full_name'))             $user->full_name             = $request->full_name;
+        if ($request->has('personal_email'))        $user->personal_email        = $request->personal_email;
+        if ($request->has('work_email'))            $user->work_email            = $request->work_email;
+        if ($request->has('phone_number'))          $user->phone_number          = $request->phone_number;
+        if ($request->has('position'))              $user->position              = $request->position;
+        if ($request->has('department'))            $user->department            = $request->department;
+        if ($request->has('company'))               $user->company               = $request->company;
+        if ($request->has('tipe_afiliasi'))         $user->tipe_afiliasi         = $request->tipe_afiliasi;
+        if ($request->has('perusahaan_kontraktor')) $user->perusahaan_kontraktor = $request->perusahaan_kontraktor;
+        if ($request->has('sub_kontraktor'))        $user->sub_kontraktor        = $request->sub_kontraktor;
+        if ($request->has('alamat'))                $user->alamat                = $request->alamat;
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
@@ -64,7 +75,7 @@ class ProfileController extends Controller
         return \response()->json([
             'status'  => 'success',
             'message' => 'Profile updated successfully',
-            'data'    => $this->formatUser($user),
+            'data'    => $this->formatUser($user->fresh(['licenses', 'certifications', 'violations' => fn($q) => $q->orderBy('date_of_violation', 'desc'), 'medicals' => fn($q) => $q->orderBy('checkup_date', 'desc')])),
         ]);
     }
 
@@ -124,6 +135,7 @@ class ProfileController extends Controller
     // POST /api/profile/license
     public function storeLicense(Request $request)
     {
+        session_write_close();
         $input = $request->all();
         // Map Indonesian status to DB enum
         if (isset($input['status'])) {
@@ -170,6 +182,7 @@ class ProfileController extends Controller
     // PUT /api/profile/license/{id}
     public function updateLicense(Request $request, $id)
     {
+        session_write_close();
         $input = $request->all();
         if (isset($input['status'])) {
             $statusMap = [
@@ -225,6 +238,7 @@ class ProfileController extends Controller
     // POST /api/profile/certification
     public function storeCertification(Request $request)
     {
+        session_write_close();
         $input = $request->all();
         if (isset($input['status'])) {
             $statusMap = [
@@ -320,6 +334,7 @@ class ProfileController extends Controller
     // POST /api/profile/medical
     public function storeMedical(Request $request)
     {
+        session_write_close();
         $request->validate([
             'title'             => 'nullable|string|max:200',
             'patient_name'      => 'nullable|string|max:150',
@@ -347,25 +362,40 @@ class ProfileController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $medical = $user->medicals()->create($request->only(
-            'title', 'patient_name',
-            'checkup_date', 'blood_type', 'height', 'weight', 'blood_pressure',
-            'allergies', 'result', 'next_checkup_date',
-            'doctor_name', 'doctor_contact', 'facility_name', 'facility_contact',
-            'last_medication', 'current_medication', 'current_illness',
-            'doctor_notes', 'checklist_items'
-        ));
+        // Gunakan Transaction biar aman kalau ada request ganda
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            UserMedical::updateOrCreate(
+                ['user_id' => $user->id],
+                $request->only(
+                    'title', 'patient_name',
+                    'checkup_date', 'blood_type', 'height', 'weight', 'blood_pressure',
+                    'allergies', 'result', 'next_checkup_date',
+                    'doctor_name', 'doctor_contact', 'facility_name', 'facility_contact',
+                    'last_medication', 'current_medication', 'current_illness',
+                    'doctor_notes', 'checklist_items'
+                )
+            );
+            \Illuminate\Support\Facades\DB::commit();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Gagal menyimpan data: ' . $e->getMessage()
+            ], 500);
+        }
 
         return \response()->json([
             'status'  => 'success',
-            'message' => 'Medical record added successfully.',
-            'data'    => $medical,
+            'message' => 'Medical record updated successfully.',
+            'data'    => $this->formatUser($user->fresh(['licenses', 'certifications', 'violations' => fn($q) => $q->orderBy('date_of_violation', 'desc'), 'medicals' => fn($q) => $q->orderBy('checkup_date', 'desc')])),
         ]);
     }
 
     // PUT /api/profile/medical/{id}
     public function updateMedical(Request $request, $id)
     {
+        session_write_close();
         $request->validate([
             'title'             => 'nullable|string|max:200',
             'patient_name'      => 'nullable|string|max:150',
@@ -406,7 +436,7 @@ class ProfileController extends Controller
         return \response()->json([
             'status'  => 'success',
             'message' => 'Medical record updated successfully.',
-            'data'    => $medical,
+            'data'    => $this->formatUser($user->fresh(['licenses', 'certifications', 'violations' => fn($q) => $q->orderBy('date_of_violation', 'desc'), 'medicals' => fn($q) => $q->orderBy('checkup_date', 'desc')])),
         ]);
     }
 
@@ -436,7 +466,6 @@ class ProfileController extends Controller
             'position'       => $user->position,
             'department'     => $user->department,
             'company'        => $user->company,
-            'company_code'   => \App\Models\Company::where('name', $user->company)->first()?->code,
             'alamat'         => $user->alamat,
             'tipe_afiliasi'  => $user->tipe_afiliasi,
             'perusahaan_kontraktor' => $user->perusahaan_kontraktor,

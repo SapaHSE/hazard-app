@@ -16,6 +16,7 @@ class NewsController extends Controller
     // Paginate: ?page=1&per_page=10
     public function index(Request $request)
     {
+        session_write_close();
         $query = News::active()->with('creator')->latest();
 
         if ($request->filled('category'))   $query->where('category', $request->category);
