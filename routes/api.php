@@ -214,4 +214,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/admin/certifications/{id}/verify', [AuthController::class, 'adminVerifyCertification'])->middleware('role:admin,superadmin');
     Route::delete('/admin/certifications/{id}/reject', [AuthController::class, 'adminRejectCertification'])->middleware('role:admin,superadmin');
     
+    // ── Approval Routes (Superadmin) ──────────────────────────────────────────
+    Route::get('/approvals', [App\Http\Controllers\API\ApprovalController::class, 'getPendingApprovals']);
+    Route::post('/approvals/approve', [App\Http\Controllers\API\ApprovalController::class, 'approve']);
+    Route::post('/approvals/reject', [App\Http\Controllers\API\ApprovalController::class, 'reject']);
 });
